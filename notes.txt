@@ -1,47 +1,42 @@
-# CPython - notes
+CPython - notes
 
-Based on lectures from [Philip Guo](https://www.youtube.com/watch?v=LhadeL7_EIU&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0).
+Based on lectures from Philip Guo (https://www.youtube.com/watch?v=LhadeL7_EIU&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0)
 
-[Lecture 1](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=1)
-[Lecture 2](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=2)
-[Lecture 3](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=3)
-[Lecture 4](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=4)
-[Lecture 5](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=5)
-[Lecture 6](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=6)
+Lecture 1: https://www.youtube.com/watch?v=LhadeL7_EIU&index=1&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0
+Lecture 2: https://www.youtube.com/watch?v=YJxmyD_aEnQ&index=2&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0
+Lecture 3: https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=3
+Lecture 4: https://www.youtube.com/watch?v=naZTXNBbcLc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=4
+Lecture 5: https://www.youtube.com/watch?v=ix6MTSemdUU&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=5
+Lecture 6: https://www.youtube.com/watch?v=ix6MTSemdUU&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=6
 
---------
+---------------
 
-A handful of folders of interest in root of source code dir:
+A handful of folders of interest in root of source code dir
 
-### Include/
+- Include/
 includes/interfaces.
 important file: opcode.h
 
-### Python/
+- Python/
 source code for python interpreter itself
 important file: ceval.c
 
-### Lib/
+- Lib/
 library functions - written in python 
 
-### Modules/
+- Modules/
 source code for python modules
-
---------
 
 Some interesting stuff:
 
-```
 $ cat t.py
 x = 1
 y = 2
 z = x + y
 print(z)
-```
 
 we can get a neat disassembly by using the "dis" module (`python -m  <module>` will execute the main() method of <module>)
 
-```
 $ python -m dis t.py
   1           0 LOAD_CONST               0 (1)
               3 STORE_NAME               0 (x)
@@ -59,7 +54,6 @@ $ python -m dis t.py
              26 PRINT_NEWLINE
              27 LOAD_CONST               2 (None)
              30 RETURN_VALUE
-```
 
 What this means is:
 1. push the constant "1" to the stack
@@ -74,7 +68,6 @@ What this means is:
 
 Main execution of python interpreter is PyEval_EvalFrameEx() - there's an infinite loop
 
-```
     for (;;) {                      // line  964
     // ...
 
@@ -92,4 +85,5 @@ Main execution of python interpreter is PyEval_EvalFrameEx() - there's an infini
 
     // ...
     }                               // line 3021
-```
+
+PyObject *PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
