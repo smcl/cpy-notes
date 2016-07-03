@@ -2,12 +2,12 @@
 
 Based on lectures from [Philip Guo](https://www.youtube.com/watch?v=LhadeL7_EIU&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0).
 
-[Lecture 1](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=1)
-[Lecture 2](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=2)
-[Lecture 3](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=3)
-[Lecture 4](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=4)
-[Lecture 5](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=5)
-[Lecture 6](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=6)
+* [Lecture 1](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=1)
+* [Lecture 2](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=2)
+* [Lecture 3](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=3)
+* [Lecture 4](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=4)
+* [Lecture 5](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=5)
+* [Lecture 6](https://www.youtube.com/watch?v=dJD9mLPCkuc&list=PLwyG5wA5gIzgTFj5KgJJ15lxq5Cv6lo_0&index=6)
 
 --------
 
