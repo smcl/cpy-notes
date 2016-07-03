@@ -61,8 +61,9 @@ $ python -m dis t.py
              30 RETURN_VALUE
 ```
 
-What this means is:
-1. push the constant "1" to the stack
+What this does is:
+
+1. push the constant "1" to the value stack
 2. pop the top of the stack and store reference against name "x"
 3. push constant "2" to the stack
 4. pop top of the stack and store reference against name "y"
