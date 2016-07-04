@@ -81,14 +81,13 @@ Main execution of python interpreter is PyEval_EvalFrameEx() - there's an infini
 
             switch (opcode) {       // line 1109
     // ...
-	    	   case NOP:
-		   	goto fast_next_opcode:
-		   case LOAD_FAST:
-		   	x = GETLOCAL(oparg);
+		case NOP:
+			goto fast_next_opcode:
+		case LOAD_FAST:
+			x = GETLOCAL(oparg);
 			if (x != NULL) {
     // ...
 			
-
 	    } /* switch */          // line 2823
 
     // ...
