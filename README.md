@@ -150,3 +150,33 @@ Function
 - has a Code object
 - but also has some "environment"
 - .. wait, this is sorta the same description as Frame. Not sure. Think Function is maybe just a Code object bound to an identifier?
+
+## Objects/PyObject
+
+Every object you deal with in CPython "derives" from a PyObject type (because C has no OO it's actually just that you cast it to (PyObject*) before using it). Some interesting stuff:
+
+/Objects/intobject.c
+
+When we have 
+
+```
+x = 1
+y = 2
+z = x + y
+```
+
+The BINARY_ADD opcode ends up with us in int_add() in opcodes.c:
+
+```
+static PyObject *int_add(PyIntObject *v, PyIntObject *w) {
+    register long a, v, x;
+    CONVERT_TO_LONG(v, a);
+    CONVERT_TO_LONG(w, b);
+    /* casts in the line below avoid undefined behaviour on overflow */
+    x = (long)((unsigned long)a + b);
+    if ((x^a) >= 0 || (x^b) >=0)
+      return PyInt_FromLong(x);
+    return PyLong_Type.tp_as_number->nb_add((PyObject *)v, (PyObject *)w);
+}
+```
+
