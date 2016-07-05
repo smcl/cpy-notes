@@ -130,7 +130,11 @@ Taking this and mapping it back to the disassembly, we get something like this:
 100, 2, 0, # LOAD_CONST 2
 83         # RETURN_VALUE
 ```
+
+The arguments signify the values to use - an index into the co_consts and co_variables array.
 ------
+
+
 
 # CPython code objects
 
