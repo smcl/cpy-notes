@@ -93,3 +93,42 @@ Main execution of python interpreter is PyEval_EvalFrameEx() - there's an infini
     // ...
     }                               // line 3021
 ```
+
+If we want to look at the individual bytes in the bytecode instead of the disassembly:
+```
+$ cat > t.py << EOF
+x = 1
+y = 2
+z = x + y
+print(z)
+EOF
+$ python
+Python 2.7.12rc1 (default, Jun 13 2016, 09:20:59) 
+[GCC 5.4.0 20160609] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> c = compile(open('t.py').read(), 't.py', 'exec')
+>>> c.co_code
+'d\x00\x00Z\x00\x00d\x01\x00Z\x01\x00e\x00\x00e\x01\x00\x17Z\x02\x00e\x02\x00GHd\x02\x00S'
+>>> [ ord(b) for b in c.co_code ]
+[100, 0, 0, 90, 0, 0, 100, 1, 0, 90, 1, 0, 101, 0, 0, 101, 1, 0, 23, 90, 2, 0, 101, 2, 0, 71, 72, 100, 2, 0, 83]
+```
+
+------
+
+# CPython code objects
+
+Bytecode
+- string of ones and zeroes, representing operations and args
+
+Code
+- collection of bytecode 
+- has some semantics like constants and variable names
+
+Frame
+- has a code object, and an "environment"
+- just a runtime representation of code, kinda like an instance of a Function
+
+Function
+- has a Code object
+- but also has some "environment"
+- .. wait, this is sorta the same description as Frame. Not sure. Think Function is maybe just a Code object bound to an identifier?
