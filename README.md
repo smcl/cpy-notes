@@ -113,6 +113,23 @@ Type "help", "copyright", "credits" or "license" for more information.
 [100, 0, 0, 90, 0, 0, 100, 1, 0, 90, 1, 0, 101, 0, 0, 101, 1, 0, 23, 90, 2, 0, 101, 2, 0, 71, 72, 100, 2, 0, 83]
 ```
 
+Taking this and mapping it back to the disassembly, we get something like this:
+
+```
+100, 0, 0, # LOAD_CONST 0
+90,  0, 0, # STORE_NAME 0
+100, 1, 0, # LOAD_CONST 1
+90,  1, 0, # STORE_NAME 1
+101, 0, 0, # LOAD_NAME 0
+101, 1, 0, # LOAD_NAME 1
+23,        # BINARY_ADD
+90,  2, 0, # STORE_NAME 2
+101, 2, 0, # LOAD_NAME 2
+71,        # PRINT_ITEM
+72,        # PRINT_NEWLINE
+100, 2, 0, # LOAD_CONST 2
+83         # RETURN_VALUE
+```
 ------
 
 # CPython code objects
@@ -129,6 +146,7 @@ Frame
 - just a runtime representation of code, kinda like an instance of a Function
 
 Function
+- actually a Closure
 - has a Code object
 - but also has some "environment"
 - .. wait, this is sorta the same description as Frame. Not sure. Think Function is maybe just a Code object bound to an identifier?
