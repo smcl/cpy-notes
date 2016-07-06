@@ -116,23 +116,33 @@ Type "help", "copyright", "credits" or "license" for more information.
 Taking this and mapping it back to the disassembly, we get something like this:
 
 ```
-100, 0, 0, # LOAD_CONST 0
-90,  0, 0, # STORE_NAME 0
-100, 1, 0, # LOAD_CONST 1
-90,  1, 0, # STORE_NAME 1
-101, 0, 0, # LOAD_NAME 0
-101, 1, 0, # LOAD_NAME 1
+100, 0, 0, # LOAD_CONST 0x0001
+90,  0, 0, # STORE_NAME 0x0000
+100, 1, 0, # LOAD_CONST 0x0001
+90,  1, 0, # STORE_NAME 0x0001
+101, 0, 0, # LOAD_NAME 0x0000
+101, 1, 0, # LOAD_NAME 0x0001
 23,        # BINARY_ADD
-90,  2, 0, # STORE_NAME 2
-101, 2, 0, # LOAD_NAME 2
+90,  2, 0, # STORE_NAME 0x0002
+101, 2, 0, # LOAD_NAME 0x0002
 71,        # PRINT_ITEM
 72,        # PRINT_NEWLINE
-100, 2, 0, # LOAD_CONST 2
+100, 2, 0, # LOAD_CONST 0x0002
 83         # RETURN_VALUE
 ```
 
-The arguments signify the values to use - an index into the co_consts and co_variables array.
+The first byte tends to be the opcode, and the second two the index into the co_consts/co_variable array. The arg is two bytes but reversed (think some stack funkiness going on) - so [100,1,0] is LOAD_CONST 1, [100,2,0] is LOAD_CONST 2 and [100,0,1] is LOAD_CONST 256. 
 
+If we have > 65536 items we obviously cannot represent these in the two-byte space we have for each arg. This is where the EXTENDED_ARG opcode comes in. This allows us to have an extra two bytes - so for example:
+
+```
+145, 1, 0, # EXTENDED_ARG 0x0001
+100, 0, 0, # LOAD_CONST 0x0000 (= 0x0x00010000, including EXTENDED_ARG)
+145, 1, 0, # EXTENDED_ARG 0x0001
+90, 0, 0,  # LOAD_NAME 0x0000 (= 0x00010000, including EXTENDED_ARG)
+```
+
+I suspect that if we exhaust 4-byte space of consts/names there's another mechanism (double EXTENDED_ARG?) but tbh that is an insane situation we don't ever want to encounter.
 ------
 
 
