@@ -131,9 +131,9 @@ Taking this and mapping it back to the disassembly, we get something like this:
 83         # RETURN_VALUE
 ```
 
-The first byte tends to be the opcode, and the second two the index into the co_consts/co_variable array. The arg is two bytes but reversed (think some stack funkiness going on) - so [100,1,0] is LOAD_CONST 1, [100,2,0] is LOAD_CONST 2 and [100,0,1] is LOAD_CONST 256. 
+The first byte tends to be the opcode, and the second two the index into the co_consts/co_variable array. The arg is two bytes but reversed (think some stack or endian funkiness going on) - so [100,1,0] is ```LOAD_CONST 1```, [100,2,0] is ```LOAD_CONST 2``` and [100,0,1] is ```LOAD_CONST``` 256. 
 
-If we have > 65536 items we obviously cannot represent these in the two-byte space we have for each arg. This is where the EXTENDED_ARG opcode comes in. This allows us to have an extra two bytes - so for example:
+If we have > 65536 items we obviously cannot represent these in the two-byte space we have for each arg. This is where the ```EXTENDED_ARG``` opcode comes in. This allows us to have an extra two bytes - so for example if we wanted to load the 65535th constant and 65536th name then we'd issue the following:
 
 ```
 145, 1, 0, # EXTENDED_ARG 0x0001
@@ -142,11 +142,9 @@ If we have > 65536 items we obviously cannot represent these in the two-byte spa
 90, 0, 0,  # LOAD_NAME 0x0000 (= 0x00010000, including EXTENDED_ARG)
 ```
 
-I suspect that if we exhaust 4-byte space of consts/names there's another mechanism (double EXTENDED_ARG?) but tbh that is an insane situation we don't ever want to encounter.
+I suspect that if we exhaust 4-byte space of consts/names there's another mechanism (double ```EXTENDED_ARG```?) but tbh that is an insane situation we don't ever want to encounter, as that means millions of names in the same frame.
 
 ------
-
-
 
 # CPython code objects
 
@@ -171,9 +169,9 @@ Function
 
 Every object you deal with in CPython "derives" from a PyObject type (because C has no OO it's actually just that you cast it to (PyObject*) before using it). Some interesting stuff:
 
-/Objects/intobject.c
+### PyIntObject
 
-When we have 
+When we have the following:
 
 ```
 x = 1
@@ -181,7 +179,7 @@ y = 2
 z = x + y
 ```
 
-The ```x + y``` addition is compiled as a pair of LOAD_NAME instructions to push x and y to the stack, followed by a BINARY_ADD. Here's the BINARY_ADD case in the main loop of PyEval_EvalFrameEx():
+The ```x + y``` addition is compiled as a pair of ```LOAD_NAME``` instructions to push x and y to the stack, followed by a ```BINARY_ADD```. Here's the ```BINARY_ADD``` case in the main loop of ```PyEval_EvalFrameEx()```:
 
 ```
         case BINARY_ADD:
@@ -217,10 +215,9 @@ The ```x + y``` addition is compiled as a pair of LOAD_NAME instructions to push
             break;
 ```
 
-(shite, what I was going to say is actually wrong as someone decided to optimise the integer case, assume that /* INLINE: int + int */ section isnt there). 
+(shite, what I was going to say is actually wrong as someone decided to optimise the integer case, assume that /* INLINE: int + int */ section isn't there). 
 
-If the two arguments are both integers (PyInt_CheckExact() returns true for both) then we end up calling ```PyNumber_Add()``` in abstract.c:
-
+If the two arguments are both integers (```PyInt_CheckExact()``` returns true for both) then we end up calling ```PyNumber_Add()``` in abstract.c:
 
 ```
 PyObject *
@@ -239,7 +236,7 @@ PyNumber_Add(PyObject *v, PyObject *w)
 }
 ```
 
-This immediately hands off to ```binary_op1()``` - inside this we attempt to retrieve the functions handling the addition operator for both types using NB_BINOP() macro - I think this is so we can attempt to add different types, if one fails we can try the other. If both functions are the same we set one of them to NULl. Anyway we end up inside int_add() in our case:
+This immediately hands off to ```binary_op1()``` - inside this we attempt to retrieve the functions handling the addition operator for both types using ```NB_BINOP()``` macro - I think this is so we can attempt to add different types, if one fails we can try the other. If both functions are the same we set one of them to ```NULL```. Anyway we end up inside ```int_add()``` in our case:
 
 ```
 static PyObject *int_add(PyIntObject *v, PyIntObject *w) {
