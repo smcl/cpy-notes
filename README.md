@@ -143,6 +143,7 @@ If we have > 65536 items we obviously cannot represent these in the two-byte spa
 ```
 
 I suspect that if we exhaust 4-byte space of consts/names there's another mechanism (double EXTENDED_ARG?) but tbh that is an insane situation we don't ever want to encounter.
+
 ------
 
 
