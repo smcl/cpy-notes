@@ -181,7 +181,65 @@ y = 2
 z = x + y
 ```
 
-The BINARY_ADD opcode ends up with us in int_add() in opcodes.c:
+The ```x + y``` addition is compiled as a pair of LOAD_NAME instructions to push x and y to the stack, followed by a BINARY_ADD. Here's the BINARY_ADD case in the main loop of PyEval_EvalFrameEx():
+
+```
+        case BINARY_ADD:
+            w = POP();
+            v = TOP();
+            if (PyInt_CheckExact(v) && PyInt_CheckExact(w)) {
+                /* INLINE: int + int */
+                register long a, b, i;
+                a = PyInt_AS_LONG(v);
+                b = PyInt_AS_LONG(w);
+                /* cast to avoid undefined behaviour
+                   on overflow */
+                i = (long)((unsigned long)a + b);
+                if ((i^a) < 0 && (i^b) < 0)
+                    goto slow_add;
+                x = PyInt_FromLong(i);
+            }
+            else if (PyString_CheckExact(v) &&
+                     PyString_CheckExact(w)) {
+                x = string_concatenate(v, w, f, next_instr);
+                /* string_concatenate consumed the ref to v */
+                goto skip_decref_vx;
+            }
+            else {
+              slow_add:
+                x = PyNumber_Add(v, w);
+            }
+            Py_DECREF(v);
+          skip_decref_vx:
+            Py_DECREF(w);
+            SET_TOP(x);
+            if (x != NULL) continue;
+            break;
+```
+
+(shite, what I was going to say is actually wrong as someone decided to optimise the integer case, assume that /* INLINE: int + int */ section isnt there). 
+
+If the two arguments are both integers (PyInt_CheckExact() returns true for both) then we end up calling ```PyNumber_Add()``` in abstract.c:
+
+
+```
+PyObject *
+PyNumber_Add(PyObject *v, PyObject *w)
+{
+    PyObject *result = binary_op1(v, w, NB_SLOT(nb_add));
+    if (result == Py_NotImplemented) {
+        PySequenceMethods *m = v->ob_type->tp_as_sequence;
+        Py_DECREF(result);
+        if (m && m->sq_concat) {
+            return (*m->sq_concat)(v, w);
+        }
+        result = binop_type_error(v, w, "+");
+    }
+    return result;
+}
+```
+
+This immediately hands off to ```binary_op1()``` - inside this we attempt to retrieve the functions handling the addition operator for both types using NB_BINOP() macro - I think this is so we can attempt to add different types, if one fails we can try the other. If both functions are the same we set one of them to NULl. Anyway we end up inside int_add() in our case:
 
 ```
 static PyObject *int_add(PyIntObject *v, PyIntObject *w) {
@@ -195,4 +253,6 @@ static PyObject *int_add(PyIntObject *v, PyIntObject *w) {
     return PyLong_Type.tp_as_number->nb_add((PyObject *)v, (PyObject *)w);
 }
 ```
+CONVERT_TO_LONG is a macro which extracts the underlying value from a PyIntObject and stores it in a long. We perform the addition, then perform a neat overflow check ((x^a) >=0 || (x^b) >=0) and if there's no overflow we create a PyIntObject from the result.
 
+In the case where addition would overflow the ```long``` type we end up calling a different slower routine that I haven't even looked at yet.
